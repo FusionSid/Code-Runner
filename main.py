@@ -28,7 +28,8 @@ async def ricklang(ctx, *, code):
     with open("main.rickroll", "w") as f:
         f.write(code)
 
-    output = run(["bash", "main.sh", random_code], capture_output=True).stdout.decode()
+    build = run(["bash", "main.sh", random_code])
+    output = run(["docker", "run", random_code], capture_output=True).stdout.decode()
     if len(output) > 4000:
         output = output[:4000]
     await ctx.send(
