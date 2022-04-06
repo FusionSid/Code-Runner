@@ -18,7 +18,7 @@ async def on_ready():
 
 
 @client.command()
-@commands.cooldown(1, 1, commands.BucketType.user)
+@commands.cooldown(1, 60, commands.BucketType.user)
 async def ricklang(ctx, *, code):
     code = code.replace("`", "")
     
