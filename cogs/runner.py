@@ -15,13 +15,13 @@ class Ricklang(commands.Cog):
         self.client = client
 
     @commands.command()
-    @commands.cooldown(1, 60, commands.BucketType.user)
+    # @commands.cooldown(1, 60, commands.BucketType.user)
     async def ricklang(self, ctx, *, code):
         code = code.replace("`", "")
         
         random_code_list = string.ascii_lowercase + string.digits
         random_code = "".join([random.choice(random_code_list) for i in range(12)])
-        
+        print(random_code)
         os.mkdir(f"./files/{random_code}")
 
         with open(f"./files/{random_code}/main.rickroll", "w") as f:
@@ -30,12 +30,18 @@ class Ricklang(commands.Cog):
         with open(f"./files/{random_code}/Dockerfile", "w") as f:
             f.write(
 """
-FROM python:3-alpine
+# FROM python:3-alpine
+
+# COPY main.rickroll .
+# COPY src-py/ .
+
+# CMD ["python3", "RickRoll.py", "main.rickroll"]
+
+FROM ricklang
 
 COPY main.rickroll .
-COPY src-py/ .
 
-CMD ["timeout", "5", "python3", "RickRoll.py", "main.rickroll"]
+CMD ["python3", "RickRoll.py", "main.rickroll"]
 
 """
             )
@@ -43,17 +49,19 @@ CMD ["timeout", "5", "python3", "RickRoll.py", "main.rickroll"]
         copy_tree(f"{os.getcwd()}/files/src-py/", f"{os.getcwd()}/files/{random_code}/src-py/")
 
         build = run(["docker", "build", "-t", random_code, f"./files/{random_code}"])
-        output = run(["docker", "run", random_code], capture_output=True).stdout.decode()
+        output = run(["timeout", "-s", "KILL", "3", "docker", "run", "--rm", "--read-only", random_code], capture_output=True).stdout.decode()
         if len(output) > 4000:
             output = output[:4000]
         await ctx.send(
             embed=discord.Embed(title = "Output", color=discord.Color.blue(), description=f"""```\n{output}\n```""")
         )
-        image = run(["docker", "images", "-q", random_code], capture_output=True).stdout.decode()
+        shutil.rmtree(f"./files/{random_code}")
+        
         await asyncio.sleep(10)
+
+        image = run(["docker", "images", "-q", random_code], capture_output=True).stdout.decode()
         os.system(f"docker image rm -f {image}")
 
-        shutil.rmtree(f"./files/{random_code}")
 
 
     @commands.Cog.listener()
