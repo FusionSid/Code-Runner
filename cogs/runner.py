@@ -30,12 +30,6 @@ class Ricklang(commands.Cog):
         with open(f"./files/{random_code}/Dockerfile", "w") as f:
             f.write(
 """
-# FROM python:3-alpine
-
-# COPY main.rickroll .
-# COPY src-py/ .
-
-# CMD ["python3", "RickRoll.py", "main.rickroll"]
 
 FROM ricklang
 
