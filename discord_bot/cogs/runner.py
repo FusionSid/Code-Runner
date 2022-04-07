@@ -17,6 +17,7 @@ class Ricklang(commands.Cog):
     @commands.command()
     @commands.cooldown(1, 60, commands.BucketType.user)
     async def ricklang(self, ctx, *, code):
+        print(repr(code))
         code = code.replace("`", "")
         
         random_code_list = string.ascii_lowercase + string.digits
