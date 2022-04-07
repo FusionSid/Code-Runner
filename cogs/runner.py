@@ -15,7 +15,7 @@ class Ricklang(commands.Cog):
         self.client = client
 
     @commands.command()
-    # @commands.cooldown(1, 60, commands.BucketType.user)
+    @commands.cooldown(1, 60, commands.BucketType.user)
     async def ricklang(self, ctx, *, code):
         code = code.replace("`", "")
         
@@ -52,9 +52,17 @@ CMD ["python3", "RickRoll.py", "main.rickroll"]
         shutil.rmtree(f"./files/{random_code}")
         
         await asyncio.sleep(10)
-
+        
         image = run(["docker", "images", "-q", random_code], capture_output=True).stdout.decode()
         os.system(f"docker image rm -f {image}")
+        print("IMAGE:", image)
+
+        container = run(["docker", "ps", "-a", "-q", "--filter", f"ancestor={image}"], capture_output=True).stdout.decode()
+        print("CONTAINER:", container)
+
+        os.system(f"docker container kill {container}")
+
+
 
 
 
