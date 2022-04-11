@@ -31,7 +31,7 @@ async def run_code(code, language: LANGUAGES, *args, **kwargs):
     code = repr(code).strip("'") # idk why this works but it does
 
     run(["docker", "build", "-t", random_code, f"./{language}/", "--build-arg", f"CODE={code}"], stdout=DEVNULL, stderr=DEVNULL)
-    output = run(["timeout", "-s", "KILL", "3", "docker", "run", "--rm", "--read-only", random_code], capture_output=True).stdout.decode()
+    output = run(["timeout", "-s", "KILL", "3", "docker", "run", "--rm", "--read-only", "--network", "none", random_code], capture_output=True).stdout.decode()
 
     if len(output) > 4000:
         output = output[:4000]
