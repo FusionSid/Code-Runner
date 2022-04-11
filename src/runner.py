@@ -36,25 +36,10 @@ async def run_code(code, language: LANGUAGES, *args, **kwargs):
     if len(output) > 4000:
         output = output[:4000]
 
-    if kwargs["await_task"]: # if you are in an async event loop that wont be killed before this is done eg: discord bot, fastapi
+    if "await_task" in kwargs and kwargs["await_task"]: # if you are in an async event loop that wont be killed before this is done eg: discord bot, fastapi
         loop = asyncio.get_event_loop()
         loop.create_task(cleanup(random_code))
     else:
         await cleanup(random_code)
 
     return output
-
-
-async def main():
-    # Example of how to use with file
-    with open("example.rickroll") as file:
-        code = file.read()
-
-    output = await run_code(code, "rickroll-lang")
-    
-    print(f"Output:\n", output)
-
-
-if __name__ == "__main__":
-    loop = asyncio.new_event_loop()
-    loop.run_until_complete(main())
