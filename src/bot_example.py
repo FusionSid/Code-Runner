@@ -15,7 +15,7 @@ client = commands.Bot(".")
 async def runcode(ctx, language: str, *, code):
     code = code.replace("`", "")
 
-    output = await runner.run_code(repr(code), language, await_task=True)
+    output = await runner.run_code(code, language, await_task=True)
 
     await ctx.send(
         embed=discord.Embed(

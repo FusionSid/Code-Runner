@@ -6,7 +6,7 @@ from subprocess import run, DEVNULL
 from typing import Literal, get_args
 
 
-LANGUAGES = Literal["python", "rickroll-lang"]
+LANGUAGES = Literal["python", "rickroll-lang", "node"]
 
 
 async def cleanup(random_code):
@@ -15,17 +15,20 @@ async def cleanup(random_code):
     image = run(["docker", "images", "-q", random_code], capture_output=True).stdout.decode()
     container = run(["docker", "ps", "-a", "-q", "--filter", f"ancestor={image}"], capture_output=True).stdout.decode()
     
-    os.system(f"docker container kill {container} >/dev/null 2>&1") # >/dev/null 2>&1 just makes it try to not print the output to terminal
+    os.system(f"docker container kill {container} >/dev/null 2>&1") # just makes it try to not print the output to terminal
     os.system(f"docker container rm -f {container} >/dev/null 2>&1")
     os.system(f"docker image rm -f {image} >/dev/null 2>&1")
 
 
 async def run_code(code, language: LANGUAGES, *args, **kwargs):
+    
     if language not in list(get_args(LANGUAGES)):
         return f"Not a valid lanuage\nList: {', '.join(list(get_args(LANGUAGES)))}"
     
     random_code_list = string.ascii_lowercase + string.digits
     random_code = "".join([random.choice(random_code_list) for i in range(12)])
+
+    code = repr(code).strip("'") # idk why this works but it does
 
     run(["docker", "build", "-t", random_code, f"./{language}/", "--build-arg", f"CODE={code}"], stdout=DEVNULL, stderr=DEVNULL)
     output = run(["timeout", "-s", "KILL", "3", "docker", "run", "--rm", "--read-only", random_code], capture_output=True).stdout.decode()

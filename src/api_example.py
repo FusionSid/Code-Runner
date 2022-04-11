@@ -19,7 +19,7 @@ async def home():
 
 @app.post("/api/run")
 async def run_the_code(code : Code):
-    output = await runner.run_code(repr(code.code), code.language, await_task=True)
+    output = await runner.run_code(code.code, code.language, await_task=True)
     return {"output":output}
 
 if __name__ == "__main__":
