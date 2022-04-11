@@ -46,13 +46,13 @@ async def run_code(code, language: LANGUAGES, *args, **kwargs):
 
 
 async def main():
-    # you don't need to use a file you can just supply text and it will work too
-    with open("example.rickroll") as f:
-        code = f.read().__repr__().strip("'")
+    # Example of how to use with file
+    with open("example.rickroll") as file:
+        code = file.read()
 
     output = await run_code(code, "rickroll-lang")
     
-    print(output)
+    print(f"Output:\n", output)
 
 
 if __name__ == "__main__":
