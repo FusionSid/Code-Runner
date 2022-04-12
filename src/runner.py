@@ -15,7 +15,7 @@ async def cleanup(random_code: str) -> None:
 
     Parameters
     ----------
-        randome_code (str): The random generated name (image name)
+        random_code (str): The random generated name (image name)
 
     Deletes the image that was made
     Also if it has made a container it will kill and delete that container too
@@ -50,7 +50,6 @@ async def run_code(code: str, language: LANGUAGES, **kwargs) -> str:
                 You need to be in an event loop to use this because if not it will kill the task before it starts
                 Turning this on will make the output be returned faster
 
-
     Returns
     -------
         str : The output of the code runned
@@ -66,26 +65,17 @@ async def run_code(code: str, language: LANGUAGES, **kwargs) -> str:
     code = repr(code).strip("'")  # idk why this works but it does
 
     run([
-        "docker",
-        "build",
-        "-t",
-        random_code,
-        f"./{language}/",
-        "--build-arg",
-        f"CODE={code}",
+        "docker", "build", 
+        "-t", random_code, f"./{language}/",
+        "--build-arg", f"CODE={code}",
     ], stdout=DEVNULL,stderr=DEVNULL,)  # build the container
 
     output = run([
-            "timeout",
-            "-s",
-            "KILL",
-            "3",
-            "docker",
-            "run",
+            "timeout", "-s", "KILL", "3",
+            "docker","run",
             "--rm",
             "--read-only",
-            "--network",
-            "none",
+            "--network", "none",
             random_code,
         ], capture_output=True, ).stdout.decode()  # run the container
 
